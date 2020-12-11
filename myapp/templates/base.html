@@ -1,0 +1,14 @@
+<html>
+    <head>
+        {% if title %}
+        <title>{{ title }} - Contact Me App</title>
+        {% else %}
+        <title> Welcome to Contact Me App</title>
+        {% endif %}
+    </head>
+    <body>
+        <div>Microblogg: <a href="/index">Home</a></div>
+        <hr>
+        {% block content %}{% endblock %}
+    </body>
+</html>
