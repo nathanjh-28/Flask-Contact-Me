@@ -73,3 +73,8 @@ sqlalchemy.exc.IntegrityError: (sqlite3.IntegrityError) UNIQUE constraint failed
 [parameters: ('nathan', 'Lorem Ipsum pass the dimsum', 2)]
 (Background on this error at: http://sqlalche.me/e/13/gkpj)
 2020-12-11 21:05:43,085 INFO: Microblog startup [in /Users/nathanjh/dev-learning/projects/flask-contact-me/myapp/__init__.py:41]
+2020-12-11 21:22:13,321 INFO: Microblog startup [in /Users/nathanjh/dev-learning/projects/flask-contact-me/myapp/__init__.py:41]
+2020-12-11 21:26:59,016 INFO: Microblog startup [in /Users/nathanjh/dev-learning/projects/flask-contact-me/myapp/__init__.py:41]
+2020-12-11 21:27:12,323 INFO: Microblog startup [in /Users/nathanjh/dev-learning/projects/flask-contact-me/myapp/__init__.py:41]
+2020-12-11 21:27:19,220 INFO: Microblog startup [in /Users/nathanjh/dev-learning/projects/flask-contact-me/myapp/__init__.py:41]
+2020-12-11 21:27:42,413 INFO: Microblog startup [in /Users/nathanjh/dev-learning/projects/flask-contact-me/myapp/__init__.py:41]

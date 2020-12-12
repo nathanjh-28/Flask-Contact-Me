@@ -3,17 +3,16 @@ from flask import render_template, flash, redirect, url_for, request
 from werkzeug.urls import url_parse
 from flask_login import current_user, login_user, logout_user, login_required
 from myapp import app, db
-from myapp.forms import LoginForm, RegistrationForm, EditProfileForm
+from myapp.forms import LoginForm, RegistrationForm, EditProfileForm, EmptyForm
 from myapp.models import User, Post
 
-
-# Home page maybe with some instructions / login
 @app.before_request
 def before_request():
     if current_user.is_authenticated:
         current_user.last_seen = datetime.utcnow()
         db.session.commit()
     
+#_______________________________________________________________________  Home
 @app.route('/')
 @app.route('/index')
 @login_required
@@ -30,6 +29,7 @@ def index():
     ]
     return render_template('index.html', title='Home', posts=posts)
 
+#_______________________________________________________________________  Login
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
@@ -48,6 +48,7 @@ def login():
         return redirect(next_page)
     return render_template('login.html', title='Sign In', form=form)
 
+#_______________________________________________________________________  Logout
 @app.route('/logout')
 def logout():
     logout_user()
@@ -67,16 +68,19 @@ def register():
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
 
+#_______________________________________________________________________  User
 @app.route('/user/<username>')
 @login_required
 def user(username):
+    form = EmptyForm()
     user = User.query.filter_by(username=username).first_or_404()
     posts = [
         {'author': user, 'body': 'Test post #1'},
         {'author': user, 'body': 'Test post #2'}
         ]
-    return render_template('user.html', user=user, posts=posts)
+    return render_template('user.html', user=user, posts=posts, form=form)
 
+#_______________________________________________________________________  Edit Profile
 @app.route('/edit_profile', methods=['GET', 'POST'])
 @login_required
 def edit_profile():
@@ -91,6 +95,47 @@ def edit_profile():
         form.username.data = current_user.username
         form.about_me.data = current_user.about_me
     return render_template('edit_profile.html', title='Edit Profile', form=form)
+
+#_______________________________________________________________________  Follow
+@app.route('/follow/<username>', methods=['POST'])
+@login_required
+def follow(username):
+    form = EmptyForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=username).first()
+        if user is None:
+            flash(f"User {username} not found.")
+            return redirect(url_for('index'))
+        if user == current_user:
+            flash('You cannot follow yourself!')
+            return redirect(url_for('user', username=username))
+        current_user.follow(user)
+        db.session.commit()
+        flash(f"You are following {username}!")
+        return redirect(url_for('user', username=username))
+    else:
+        return redirect(url_for('index'))
+
+#_______________________________________________________________________  Unfollow
+@app.route('/unfollow/<username>', methods=['POST'])
+@login_required
+def unfollow(username):
+    form = EmptyForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=username).first()
+        if user is None:
+            flash(f"User {username} not found.")
+            return redirect(url_for('index'))
+        if user == current_user:
+            flash('You cannot unfollow yourself!')
+            return redirect(url_for('user', username=username))
+        current_user.unfollow(user)
+        db.session.commit()
+        flash(f"You are not following {username}.")
+        return redirect(url_for('user', username=username))
+    else:
+        return redirect(url_for('index'))
+
 
 
 # contacts index page
